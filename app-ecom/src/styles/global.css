@@ -110,15 +110,11 @@ body {
   color: var(--label-alternative);
 }
 
-.pareto-h3,
-.stock-flip strong {
+.pareto-h3 {
+  margin: var(--space-32) 0 var(--space-12);
   font-size: 15px;
   font-weight: 700;
   color: var(--label-strong);
-}
-
-.pareto-h3 {
-  margin: var(--space-32) 0 var(--space-12);
 }
 
 .pareto-table-wrap {
@@ -157,7 +153,7 @@ body {
   color: var(--primary-normal);
 }
 
-.stock-flip {
+.stock-conclusion {
   margin-top: var(--space-20);
   padding: var(--space-16);
   border: 1px solid var(--line-primary);
@@ -165,11 +161,15 @@ body {
   background: var(--primary-surface);
 }
 
-.stock-flip p {
-  margin: var(--space-8) 0 0;
+.stock-conclusion p {
+  margin: 0;
   font-size: 13px;
   line-height: 1.7;
   color: var(--label-neutral);
+}
+
+.stock-conclusion p + p {
+  margin-top: var(--space-12);
 }
 
 .app-footer {

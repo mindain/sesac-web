@@ -78,11 +78,13 @@ export default function ParetoChart({ pareto, category }: Props) {
       </ResponsiveContainer>
 
       <p className="caption">
-        예상과 반대 결과입니다. <strong>조회는 상위 1% 상품이 {top1.viewShare.toFixed(1)}%를 가져가지만, 구매는
-        같은 상위 1%가 {top1.buyShare.toFixed(1)}%에 그칩니다.</strong> 인기 상품에 조회가 몰리는 것에 비해 실제
-        구매는 훨씬 넓게 퍼져 있다는 뜻이고, 롱테일 상품이 매출에서 차지하는 몫이 큽니다. 추천 시스템을 인기순으로만
-        구성하면 놓치는 매출이 크다는 근거가 됩니다. 실제로 조회된 상품은{' '}
-        {formatNumber(pareto.viewItems)}개인데 구매까지 간 상품은 {formatNumber(pareto.buyItems)}개뿐입니다.
+        <strong>
+          조회는 상위 1% 상품이 {top1.viewShare.toFixed(1)}%를 가져가지만, 구매는 같은 상위 1%가{' '}
+          {top1.buyShare.toFixed(1)}%에 그칩니다.
+        </strong>{' '}
+        인기 상품에 조회가 몰리는 것에 비해 구매는 훨씬 넓게 퍼져 있어, 롱테일 상품이 매출에서 차지하는 몫이 큽니다.
+        추천을 인기순으로만 구성하면 놓치는 매출이 크다는 뜻입니다. 조회된 상품은 {formatNumber(pareto.viewItems)}
+        개인데 구매까지 간 상품은 {formatNumber(pareto.buyItems)}개뿐입니다.
       </p>
 
       <h3 className="pareto-h3">카테고리별 구매 전환율 상위 (조회 5,000건 이상 {category.counted}개 중)</h3>

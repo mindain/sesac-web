@@ -71,25 +71,23 @@ export default function StockChart({ stock }: Props) {
         </BarChart>
       </ResponsiveContainer>
 
-      <p className="caption">
-        재고가 있는 상품은 {formatRate(inStock?.viewToCart ?? 0, 3)}가 장바구니로 가지만, 품절 상품은{' '}
-        {formatRate(out?.viewToCart ?? 0, 3)}에 그칩니다 — <strong>{ratio.toFixed(1)}배 차이</strong>입니다. 전체
-        조회의 {formatRate(out?.viewShare ?? 0, 1)}가 품절 상품에 쓰이고 있습니다.
-      </p>
-
-      <div className="stock-flip">
-        <strong>가설이 뒤집힌 지점</strong>
+      <div className="stock-conclusion">
         <p>
-          "품절이라 못 사고 이탈한다"를 예상했지만, 일단 장바구니에 담긴 뒤에는 품절 상품의 구매 전환율이{' '}
-          {formatRate(out?.cartToBuy ?? 0)}로 재고 있는 상품({formatRate(inStock?.cartToBuy ?? 0)})보다 오히려
-          높았습니다. 즉 품절은 <strong>담기 전에</strong> 걸러집니다. 사용자는 품절 표시를 보고 담지 않으며, 담을
-          만큼 원한 상품이면 재입고를 기다려서라도 삽니다.
+          품절은 <strong>장바구니에 담기 전에</strong> 이탈을 만듭니다. 재고가 있는 상품은 조회의{' '}
+          {formatRate(inStock?.viewToCart ?? 0, 3)}가 장바구니로 가지만 품절 상품은{' '}
+          {formatRate(out?.viewToCart ?? 0, 3)}에 그쳐 <strong>{ratio.toFixed(1)}배</strong> 차이가 납니다. 전체
+          조회의 {formatRate(out?.viewShare ?? 0, 1)}가 품절 상품에 쓰이고 있습니다.
+        </p>
+        <p>
+          반면 담긴 뒤의 구매 전환율은 품절 {formatRate(out?.cartToBuy ?? 0)}, 재고 있음{' '}
+          {formatRate(inStock?.cartToBuy ?? 0)}로 차이가 없습니다. 담을 만큼 원한 상품이면 재입고를 기다려서라도
+          삽니다.
         </p>
       </div>
 
       <p className="caption">
         재고 값은 주 단위 스냅샷이라 시점 정확도가 ±1주입니다. 담은 직후 재입고된 경우가 '품절 상태로 담김'에
-        섞여 있을 수 있고, 이것이 위 역전의 일부를 설명할 수 있습니다. 재고 기록이 조회 시점보다 늦게 시작하는{' '}
+        섞여 있을 수 있습니다. 재고 기록이 조회 시점보다 늦게 시작하는{' '}
         {formatRate(stock.states.find((s) => s.state === '기록 없음')?.viewShare ?? 0, 1)}의 조회는 별도로
         표시했습니다.
       </p>
