@@ -40,7 +40,9 @@
 
 27MB CSV를 브라우저가 직접 읽게 하면 안 된다. 빌드 전에 파이썬 스크립트로 전처리한다.
 
-`scripts/build_data.py` (표준 라이브러리만 사용) → `public/data/` 에 아래 3개 생성:
+`scripts/build_data.py` (표준 라이브러리만 사용) → `app/src/data/` 에 아래 3개 생성:
+
+**출력 위치가 `public/`이 아니라 `src/`인 이유**: `public/`에 두면 파일명이 그대로 배포돼 콘텐츠 해시가 붙지 않는다. 그러면 데이터를 갱신했을 때 재방문자가 새 JS + 캐시된 옛 JSON을 함께 받아, 틀린 숫자를 맞는 라벨 아래 보게 된다(실제로 재현됨). `src/`에 두고 `?url`로 import 하면 Vite가 `transactions-CNcajM5_.json` 처럼 해시된 이름으로 내보내므로 이 조합 자체가 불가능해진다.
 
 **`meta.json`** — 구 목록, 월 목록(12개), 동/단지명 사전(문자열 배열), 생성 시각, 전체 건수
 
@@ -164,7 +166,8 @@
 
 ## 6. 완료 기준
 
-- [ ] `py scripts/build_data.py` 실행 시 `app/public/data/` 에 3개 JSON 생성, 합계 3MB 이하
+- [ ] `py scripts/build_data.py` 실행 시 `app/src/data/` 에 3개 JSON 생성 (중구 1,034행, 합계 30KB 내외)
+- [ ] 빌드 산출물의 데이터 파일명에 콘텐츠 해시가 붙어 있을 것 (`dashboard/data/` 는 존재하지 않아야 함)
 - [ ] `npm run build` 가 Node 18에서 경고 없이 성공
 - [ ] 기본 화면(노원구, 6~10억)에서 4개 블록이 모두 데이터와 함께 렌더링
 - [ ] 예산 슬라이더를 조작하면 4개 블록이 모두 갱신

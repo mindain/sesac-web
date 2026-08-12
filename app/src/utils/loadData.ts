@@ -1,11 +1,18 @@
 import type { MetaJson, MonthlyJson, TransactionsJson, Transaction, DashboardData } from '../types/data'
 import { daysToDateStr, m2ToPyeong } from './format'
 
-async function fetchJson<T>(path: string): Promise<T> {
-  const url = `${import.meta.env.BASE_URL}data/${path}`
+// Imported as URLs so Vite includes these JSON files in the asset graph and
+// emits them with content-hashed filenames (e.g. meta-a1b2c3d4.json). This
+// guarantees that whenever the data changes, the fetched URL changes too, so
+// a stale cached JSON response can never be paired with a newer JS bundle.
+import metaUrl from '../data/meta.json?url'
+import monthlyUrl from '../data/monthly.json?url'
+import transactionsUrl from '../data/transactions.json?url'
+
+async function fetchJson<T>(url: string, label: string): Promise<T> {
   const res = await fetch(url)
   if (!res.ok) {
-    throw new Error(`데이터를 불러오지 못했습니다: ${path} (${res.status})`)
+    throw new Error(`데이터를 불러오지 못했습니다: ${label} (${res.status})`)
   }
   return res.json() as Promise<T>
 }
@@ -32,9 +39,9 @@ function decodeTransactions(raw: TransactionsJson, meta: MetaJson): Transaction[
 
 export async function loadDashboardData(): Promise<DashboardData> {
   const [meta, monthly, transactionsRaw] = await Promise.all([
-    fetchJson<MetaJson>('meta.json'),
-    fetchJson<MonthlyJson>('monthly.json'),
-    fetchJson<TransactionsJson>('transactions.json')
+    fetchJson<MetaJson>(metaUrl, 'meta.json'),
+    fetchJson<MonthlyJson>(monthlyUrl, 'monthly.json'),
+    fetchJson<TransactionsJson>(transactionsUrl, 'transactions.json')
   ])
 
   const transactions = decodeTransactions(transactionsRaw, meta)

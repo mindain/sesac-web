@@ -2,7 +2,11 @@
 Build compact JSON data files for the Seoul apartment dashboard.
 
 Reads seoul-apt-latest.csv (매매 only) and writes three JSON files into
-app/public/data/: meta.json, monthly.json, transactions.json
+app/src/data/: meta.json, monthly.json, transactions.json
+
+These live under app/src so Vite includes them in the asset graph and emits
+them with content-hashed filenames on build, preventing stale-cache/new-JS
+mismatches (see app/src/utils/loadData.ts).
 
 Standard library only.
 """
@@ -14,7 +18,7 @@ import datetime
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CSV_PATH = os.path.join(BASE_DIR, "seoul-apt-latest.csv")
-OUT_DIR = os.path.join(BASE_DIR, "app", "public", "data")
+OUT_DIR = os.path.join(BASE_DIR, "app", "src", "data")
 
 EPOCH = datetime.date(2025, 7, 1)
 TARGET_GU = "중구"
