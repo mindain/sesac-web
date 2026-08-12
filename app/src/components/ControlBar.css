@@ -1,0 +1,68 @@
+.control-bar {
+  position: sticky;
+  top: var(--space-8);
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 160px 1fr 1fr auto;
+  gap: var(--space-20);
+  align-items: end;
+}
+
+.control-item label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--label-alternative);
+  margin-bottom: var(--space-8);
+}
+
+.control-gu select {
+  width: 100%;
+  padding: var(--space-8) var(--space-12);
+  border-radius: var(--radius-8);
+  border: 1px solid var(--line-solid);
+  background: var(--bg-normal);
+  color: var(--label-normal);
+  font-size: 14px;
+  font-family: inherit;
+  height: 38px;
+}
+
+.control-reset button {
+  height: 38px;
+  padding: 0 var(--space-16);
+  border-radius: var(--radius-8);
+  border: 1px solid var(--line-solid);
+  background: var(--bg-alternative);
+  color: var(--label-normal);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.control-reset button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.control-reset button:not(:disabled):hover {
+  border-color: var(--primary-normal);
+  color: var(--primary-normal);
+}
+
+@media (max-width: 900px) {
+  .control-bar {
+    grid-template-columns: 1fr 1fr;
+    position: static;
+  }
+  .control-gu { grid-column: 1 / -1; }
+  .control-reset { grid-column: 1 / -1; }
+  .control-reset button { width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .control-bar {
+    grid-template-columns: 1fr;
+  }
+}

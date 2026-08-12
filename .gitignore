@@ -9,3 +9,7 @@ venv/
 .idea/
 .DS_Store
 Thumbs.db
+
+# 대시보드 앱
+app/node_modules/
+app/dist/

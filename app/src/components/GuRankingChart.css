@@ -1,0 +1,5 @@
+.gu-ranking-empty {
+  padding: var(--space-40) 0;
+  text-align: center;
+  color: var(--label-alternative);
+}
