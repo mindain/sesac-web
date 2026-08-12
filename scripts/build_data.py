@@ -17,6 +17,7 @@ CSV_PATH = os.path.join(BASE_DIR, "seoul-apt-latest.csv")
 OUT_DIR = os.path.join(BASE_DIR, "app", "public", "data")
 
 EPOCH = datetime.date(2025, 7, 1)
+TARGET_GU = "중구"
 
 
 def to_int(s):
@@ -102,6 +103,15 @@ def main():
                 continue
             date_offset = (dt - EPOCH).days
 
+            months.add(ym)
+
+            # Seoul-wide monthly baseline uses ALL 25 gu (comparison baseline in
+            # the trend chart), independent of the TARGET_GU row filter below.
+            seoul_month.setdefault(ym, []).append((price, pyeong_price))
+
+            if gu != TARGET_GU:
+                continue
+
             if gu not in gu_index:
                 gu_index[gu] = len(gu_list)
                 gu_list.append(gu)
@@ -120,9 +130,6 @@ def main():
             t_floor.append(floor if floor is not None else 0)
             t_price.append(price)
 
-            months.add(ym)
-
-            seoul_month.setdefault(ym, []).append((price, pyeong_price))
             gu_month.setdefault((gu, ym), []).append((price, pyeong_price))
 
             kept_rows += 1
@@ -215,7 +222,7 @@ def main():
         sizes[name] = os.path.getsize(path)
 
     print("Total CSV rows seen:", total_rows_seen)
-    print("Kept rows (매매, valid price):", kept_rows)
+    print(f"Kept rows (매매, valid price, gu=={TARGET_GU}):", kept_rows)
     print("Gu count:", len(gu_list))
     print("Dong count:", len(dong_list))
     print("Complex count:", len(complex_list))

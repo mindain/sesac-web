@@ -6,6 +6,13 @@ export default defineConfig({
   base: '/sesac-web/dashboard/',
   build: {
     outDir: '../dashboard',
-    emptyOutDir: true
+    emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom']
+        }
+      }
+    }
   }
 })

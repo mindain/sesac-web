@@ -1,28 +1,28 @@
-import { useEffect, useMemo, useState } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
 import ControlBar from './components/ControlBar'
 import StatCards from './components/StatCards'
-import MonthlyTrendChart from './components/MonthlyTrendChart'
-import GuRankingChart from './components/GuRankingChart'
+import ChartSkeleton from './components/ChartSkeleton'
 import TransactionsTable from './components/TransactionsTable'
+
+const MonthlyTrendChart = lazy(() => import('./components/MonthlyTrendChart'))
+const DongRankingChart = lazy(() => import('./components/DongRankingChart'))
 import type { DashboardData } from './types/data'
 import { loadDashboardData } from './utils/loadData'
 import {
-  computeGuRanking,
+  computeDongRanking,
   computeMonthlySeriesFromTransactions,
   computeStatSummary,
-  fallbackMonthlyForGu,
   filterTransactions,
   type Filters
 } from './utils/dataProcessing'
 
-const DEFAULT_GU = '노원구'
-const DEFAULT_BUDGET_MIN = 60000
-const DEFAULT_BUDGET_MAX = 100000
+export const TARGET_GU = '중구'
 
 export default function App() {
   const [data, setData] = useState<DashboardData | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [filters, setFilters] = useState<Filters | null>(null)
+  const [selectedDong, setSelectedDong] = useState<string | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -32,14 +32,9 @@ export default function App() {
         setData(d)
         const areaMin = Math.min(...d.transactions.map((t) => t.areaM2))
         const areaMax = Math.max(...d.transactions.map((t) => t.areaM2))
-        const gu = d.meta.gu.includes(DEFAULT_GU) ? DEFAULT_GU : d.meta.gu[0]
-        setFilters({
-          gu,
-          budgetMin: DEFAULT_BUDGET_MIN,
-          budgetMax: DEFAULT_BUDGET_MAX,
-          areaMin,
-          areaMax
-        })
+        const budgetMin = Math.min(...d.transactions.map((t) => t.price))
+        const budgetMax = Math.max(...d.transactions.map((t) => t.price))
+        setFilters({ budgetMin, budgetMax, areaMin, areaMax })
       })
       .catch((e) => {
         if (!cancelled) setError(e instanceof Error ? e.message : String(e))
@@ -57,38 +52,45 @@ export default function App() {
     }
   }, [data])
 
+  const budgetBounds = useMemo(() => {
+    if (!data) return { min: 0, max: 0 }
+    return {
+      min: Math.min(...data.transactions.map((t) => t.price)),
+      max: Math.max(...data.transactions.map((t) => t.price))
+    }
+  }, [data])
+
   const isDefault =
     !!filters &&
-    filters.gu === DEFAULT_GU &&
-    filters.budgetMin === DEFAULT_BUDGET_MIN &&
-    filters.budgetMax === DEFAULT_BUDGET_MAX &&
+    filters.budgetMin === budgetBounds.min &&
+    filters.budgetMax === budgetBounds.max &&
     filters.areaMin === areaBounds.min &&
     filters.areaMax === areaBounds.max
 
-  const budgetAreaFiltered = useMemo(() => {
+  const guTransactions = useMemo(() => {
     if (!data || !filters) return []
     return filterTransactions(data.transactions, filters)
   }, [data, filters])
-
-  const guTransactions = useMemo(() => {
-    if (!filters) return []
-    return budgetAreaFiltered.filter((t) => t.gu === filters.gu)
-  }, [budgetAreaFiltered, filters])
 
   const monthlySeries = useMemo(() => {
     if (!data) return { gu: [], seoul: [] }
     return {
       gu: computeMonthlySeriesFromTransactions(guTransactions, data.meta.months),
-      seoul: computeMonthlySeriesFromTransactions(budgetAreaFiltered, data.meta.months)
+      seoul: data.monthly.seoul
     }
-  }, [data, guTransactions, budgetAreaFiltered])
+  }, [data, guTransactions])
 
   const stats = useMemo(() => computeStatSummary(guTransactions, monthlySeries.gu), [guTransactions, monthlySeries])
 
-  const ranking = useMemo(() => {
-    if (!data) return []
-    return computeGuRanking(budgetAreaFiltered, data.meta.gu)
-  }, [data, budgetAreaFiltered])
+  const dongRanking = useMemo(() => {
+    if (!data) return { entries: [], excludedCount: 0 }
+    return computeDongRanking(guTransactions)
+  }, [data, guTransactions])
+
+  const tableTransactions = useMemo(() => {
+    if (!selectedDong) return guTransactions
+    return guTransactions.filter((t) => t.dong === selectedDong)
+  }, [guTransactions, selectedDong])
 
   function updateFilters(patch: Partial<Filters>) {
     setFilters((prev) => (prev ? { ...prev, ...patch } : prev))
@@ -96,20 +98,24 @@ export default function App() {
 
   function handleReset() {
     setFilters({
-      gu: DEFAULT_GU,
-      budgetMin: DEFAULT_BUDGET_MIN,
-      budgetMax: DEFAULT_BUDGET_MAX,
+      budgetMin: budgetBounds.min,
+      budgetMax: budgetBounds.max,
       areaMin: areaBounds.min,
       areaMax: areaBounds.max
     })
+    setSelectedDong(null)
+  }
+
+  function handleDongSelect(dong: string) {
+    setSelectedDong((prev) => (prev === dong ? null : dong))
   }
 
   return (
     <div className="app">
       <header className="app-header">
         <span className="badge">SESAC 강북캠퍼스</span>
-        <h1>서울 아파트 실거래 대시보드</h1>
-        <p>2025년 7월 ~ 2026년 6월 매매 거래 기준 · 서울 25개 구</p>
+        <h1>서울 중구 아파트 실거래 대시보드</h1>
+        <p>2025년 7월 ~ 2026년 6월 매매 거래 기준 · 서울 중구</p>
       </header>
 
       {error && <div className="card state-msg">{error}</div>}
@@ -120,33 +126,37 @@ export default function App() {
         <>
           <ControlBar
             filters={filters}
-            guList={data.meta.gu}
+            budgetBounds={budgetBounds}
             areaBounds={areaBounds}
             isDefault={isDefault}
-            onGuChange={(gu) => updateFilters({ gu })}
             onBudgetChange={(budgetMin, budgetMax) => updateFilters({ budgetMin, budgetMax })}
             onAreaChange={(areaMin, areaMax) => updateFilters({ areaMin, areaMax })}
             onReset={handleReset}
           />
 
           <div className="block" style={{ marginTop: 'var(--space-24)' }}>
-            <StatCards gu={filters.gu} stats={stats} />
+            <StatCards gu={TARGET_GU} stats={stats} />
           </div>
 
           <div className="card" style={{ marginTop: 'var(--space-24)' }}>
-            <MonthlyTrendChart
-              gu={filters.gu}
-              guSeries={monthlySeries.gu.length ? monthlySeries.gu : fallbackMonthlyForGu(data.monthly, filters.gu)}
-              seoulSeries={monthlySeries.seoul.length ? monthlySeries.seoul : data.monthly.seoul}
-            />
+            <Suspense fallback={<ChartSkeleton height={340} />}>
+              <MonthlyTrendChart gu={TARGET_GU} guSeries={monthlySeries.gu} seoulSeries={monthlySeries.seoul} />
+            </Suspense>
           </div>
 
           <div className="card" style={{ marginTop: 'var(--space-24)' }}>
-            <GuRankingChart ranking={ranking} selectedGu={filters.gu} onSelect={(gu) => updateFilters({ gu })} />
+            <Suspense fallback={<ChartSkeleton height={Math.max(360, dongRanking.entries.length * 26)} />}>
+              <DongRankingChart
+                ranking={dongRanking.entries}
+                excludedCount={dongRanking.excludedCount}
+                selectedDong={selectedDong}
+                onSelect={handleDongSelect}
+              />
+            </Suspense>
           </div>
 
           <div className="card" style={{ marginTop: 'var(--space-24)' }}>
-            <TransactionsTable transactions={guTransactions} />
+            <TransactionsTable transactions={tableTransactions} />
           </div>
         </>
       )}

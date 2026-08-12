@@ -109,3 +109,41 @@ button {
 @media (max-width: 480px) {
   .card { padding: var(--space-16); }
 }
+
+.chart-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.chart-skeleton .skeleton-line {
+  border-radius: var(--radius-8);
+  background: linear-gradient(
+    90deg,
+    var(--bg-alternative) 25%,
+    var(--line-normal) 50%,
+    var(--bg-alternative) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.chart-skeleton .skeleton-title {
+  width: 160px;
+  height: 18px;
+}
+
+.chart-skeleton .skeleton-desc {
+  width: 260px;
+  height: 13px;
+}
+
+.chart-skeleton .skeleton-body {
+  width: 100%;
+  border-radius: var(--radius-12);
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

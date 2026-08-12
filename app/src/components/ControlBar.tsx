@@ -5,10 +5,9 @@ import './ControlBar.css'
 
 interface Props {
   filters: Filters
-  guList: string[]
+  budgetBounds: { min: number; max: number }
   areaBounds: { min: number; max: number }
   isDefault: boolean
-  onGuChange: (gu: string) => void
   onBudgetChange: (min: number, max: number) => void
   onAreaChange: (min: number, max: number) => void
   onReset: () => void
@@ -16,32 +15,20 @@ interface Props {
 
 export default function ControlBar({
   filters,
-  guList,
+  budgetBounds,
   areaBounds,
   isDefault,
-  onGuChange,
   onBudgetChange,
   onAreaChange,
   onReset
 }: Props) {
   return (
     <div className="card control-bar">
-      <div className="control-item control-gu">
-        <label htmlFor="gu-select">관심 구</label>
-        <select id="gu-select" value={filters.gu} onChange={(e) => onGuChange(e.target.value)}>
-          {guList.map((gu) => (
-            <option key={gu} value={gu}>
-              {gu}
-            </option>
-          ))}
-        </select>
-      </div>
-
       <div className="control-item control-slider">
         <label>예산 범위 (만원)</label>
         <DualRangeSlider
-          min={0}
-          max={300000}
+          min={budgetBounds.min}
+          max={budgetBounds.max}
           step={1000}
           valueMin={filters.budgetMin}
           valueMax={filters.budgetMax}

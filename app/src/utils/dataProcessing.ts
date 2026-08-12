@@ -2,7 +2,6 @@ import type { MonthlyJson, MonthlyPoint, Transaction } from '../types/data'
 import { daysToYm } from './format'
 
 export interface Filters {
-  gu: string
   budgetMin: number
   budgetMax: number
   areaMin: number // m2
@@ -88,25 +87,35 @@ export function computeMonthlySeriesFromTransactions(
   })
 }
 
-export interface GuRankingEntry {
-  gu: string
+export interface DongRankingEntry {
+  dong: string
   avgPyeongPrice: number
   count: number
 }
 
-export function computeGuRanking(filteredTransactions: Transaction[], allGu: string[]): GuRankingEntry[] {
-  const byGu = new Map<string, number[]>()
-  for (const gu of allGu) byGu.set(gu, [])
+const MIN_SAMPLE_SIZE = 5
+
+export function computeDongRanking(filteredTransactions: Transaction[]): {
+  entries: DongRankingEntry[]
+  excludedCount: number
+} {
+  const byDong = new Map<string, number[]>()
   for (const t of filteredTransactions) {
-    byGu.get(t.gu)?.push(t.price / t.areaPyeong)
+    if (!byDong.has(t.dong)) byDong.set(t.dong, [])
+    byDong.get(t.dong)!.push(t.price / t.areaPyeong)
   }
-  const entries: GuRankingEntry[] = allGu.map((gu) => {
-    const arr = byGu.get(gu) ?? []
-    const avgPyeongPrice = arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0
-    return { gu, avgPyeongPrice, count: arr.length }
-  })
+
+  const all: DongRankingEntry[] = Array.from(byDong.entries()).map(([dong, arr]) => ({
+    dong,
+    avgPyeongPrice: arr.reduce((a, b) => a + b, 0) / arr.length,
+    count: arr.length
+  }))
+
+  const entries = all.filter((e) => e.count >= MIN_SAMPLE_SIZE)
+  const excludedCount = all.length - entries.length
+
   entries.sort((a, b) => b.avgPyeongPrice - a.avgPyeongPrice)
-  return entries
+  return { entries, excludedCount }
 }
 
 export function fallbackMonthlyForGu(monthly: MonthlyJson, gu: string): MonthlyPoint[] {
