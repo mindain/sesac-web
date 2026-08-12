@@ -1,0 +1,124 @@
+.clean-rule {
+  margin-top: var(--space-20);
+  padding: var(--space-16);
+  border: 1px solid var(--line-primary);
+  border-radius: var(--radius-12);
+  background: var(--primary-surface);
+}
+
+.clean-rule-k {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary-normal);
+  margin-bottom: var(--space-4);
+}
+
+.clean-rule-v {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--label-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.clean-rule p {
+  margin: var(--space-12) 0 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--label-neutral);
+}
+
+.clean-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-16);
+  margin-top: var(--space-20);
+}
+
+.clean-cell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-16);
+  border: 1px solid var(--line-normal);
+  border-radius: var(--radius-12);
+}
+
+.clean-k {
+  font-size: 12px;
+  color: var(--label-alternative);
+}
+
+.clean-v {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--label-strong);
+}
+
+.clean-arrow {
+  color: var(--label-assistive);
+  font-weight: 400;
+  margin: 0 2px;
+}
+
+.clean-sub {
+  font-size: 12px;
+  color: var(--label-assistive);
+}
+
+.clean-h3 {
+  margin: var(--space-32) 0 var(--space-12);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--label-strong);
+}
+
+.clean-table-wrap {
+  overflow-x: auto;
+}
+
+.clean-table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.clean-table th,
+.clean-table td {
+  padding: var(--space-12);
+  text-align: left;
+  border-bottom: 1px solid var(--line-normal);
+  vertical-align: top;
+  line-height: 1.6;
+}
+
+.clean-table th {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--label-alternative);
+  border-bottom-color: var(--line-solid);
+  white-space: nowrap;
+}
+
+.clean-table td:first-child {
+  font-weight: 600;
+  color: var(--label-normal);
+  white-space: nowrap;
+}
+
+.clean-table td:nth-child(2) {
+  color: var(--label-alternative);
+  white-space: nowrap;
+}
+
+.clean-table td:last-child {
+  color: var(--label-neutral);
+}
+
+@media (max-width: 900px) {
+  .clean-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

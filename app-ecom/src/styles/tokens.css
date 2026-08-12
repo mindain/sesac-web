@@ -1,0 +1,67 @@
+/* ------------------------------------------------------------------
+   Montage(원티드 디자인 시스템)의 디자인 토큰을 CSS 변수로 옮긴 것.
+   값 출처: ../../../index.html :root 블록 (그대로 복사, 값 변경 금지)
+   ------------------------------------------------------------------ */
+:root {
+  /* atomic - blue */
+  --blue-40: #0054D1;
+  --blue-45: #005EEB;
+  --blue-50: #0066FF;
+  --blue-95: #EAF2FE;
+
+  /* semantic - light */
+  --bg-normal: #FFFFFF;
+  --bg-alternative: #F7F7F8;
+  --bg-elevated: #FFFFFF;
+  --label-strong: #000000;
+  --label-normal: #171719;
+  --label-neutral: rgba(46, 47, 51, 0.88);
+  --label-alternative: rgba(55, 56, 60, 0.61);
+  --label-assistive: rgba(55, 56, 60, 0.28);
+  --primary-normal: var(--blue-50);
+  --primary-strong: var(--blue-45);
+  --line-normal: rgba(112, 115, 124, 0.22);
+  --line-solid: #E1E2E4;
+  --line-primary: rgba(0, 102, 255, 0.28);
+  --primary-surface: var(--blue-95);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.04);
+
+  /* spacing scale */
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-56: 56px;
+  --space-80: 80px;
+
+  /* radius */
+  --radius-8: 8px;
+  --radius-12: 12px;
+  --radius-16: 16px;
+  --radius-full: 999px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* semantic - dark */
+    --bg-normal: #1B1C1E;
+    --bg-alternative: #0F0F10;
+    --bg-elevated: #212225;
+    --label-strong: #FFFFFF;
+    --label-normal: #F7F7F8;
+    --label-neutral: rgba(194, 196, 200, 0.88);
+    --label-alternative: rgba(174, 176, 182, 0.61);
+    --label-assistive: rgba(174, 176, 182, 0.28);
+    --primary-normal: #3385FF;
+    --primary-strong: #1A75FF;
+    --line-normal: rgba(112, 115, 124, 0.32);
+    --line-solid: #37383C;
+    --line-primary: rgba(51, 133, 255, 0.28);
+    --primary-surface: rgba(51, 133, 255, 0.12);
+    --shadow-card: none;
+  }
+}

@@ -1,0 +1,52 @@
+.funnel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-20);
+  margin-top: var(--space-20);
+}
+
+.funnel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--space-8);
+}
+
+.funnel-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--label-strong);
+}
+
+.funnel-count {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--label-normal);
+}
+
+.funnel-track {
+  height: 28px;
+  border-radius: var(--radius-8);
+  background: var(--bg-alternative);
+  overflow: hidden;
+}
+
+.funnel-bar {
+  height: 100%;
+  border-radius: var(--radius-8);
+  background: var(--primary-normal);
+  transition: width 0.25s ease;
+}
+
+.funnel-stage:nth-child(2) .funnel-bar { opacity: 0.75; }
+.funnel-stage:nth-child(3) .funnel-bar { opacity: 0.55; }
+
+.funnel-step {
+  margin-top: var(--space-8);
+  font-size: 13px;
+  color: var(--label-alternative);
+}
+
+.funnel-step strong {
+  color: var(--primary-normal);
+}
